@@ -1,0 +1,108 @@
+# =============================================================================
+# default.yaml — Configuración central del proyecto
+# Todos los scripts leen de este archivo. NUNCA hardcodear valores en el código.
+# =============================================================================
+
+project:
+  name: "posture-risk-mining"
+  version: "0.1.0"
+  seed: 42
+
+paths:
+  raw_public:   "data/raw/public/PAMAP2/Protocol"
+  raw_lab:      "data/raw/lab"
+  processed:    "data/processed"
+  figures:      "reports/figures"
+  models:       "models"
+
+dataset:
+  name: "PAMAP2"
+  url: "https://archive.ics.uci.edu/static/public/231/pamap2+physical+activity+monitoring.zip"
+  subjects: [1, 2, 3, 4, 5, 6, 7, 8, 9]
+  activity_map:
+    low_risk:    [1, 2, 3, 4]
+    medium_risk: [5, 6, 7, 12, 13]
+    high_risk:   [16, 17, 24]
+  imu_columns:
+    hand:  [4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+    chest: [21,22,23,24,25,26,27,28,29,30,31,32,33]
+    ankle: [38,39,40,41,42,43,44,45,46,47,48,49,50]
+
+acquisition:
+  sampling_rate_hz: 100
+  imu_channels: 13
+  emg_channels: 13
+
+windowing:
+  window_ms: 200
+  overlap_ratio: 0.5
+
+filtering:
+  imu:
+    type: "butterworth"
+    order: 4
+    lowcut_hz: 0.5
+    highcut_hz: 40.0
+  emg:
+    type: "butterworth"
+    order: 4
+    lowcut_hz: 20.0
+    highcut_hz: 450.0
+
+features:
+  temporal:
+    - "rms"
+    - "mav"
+    - "wl"
+    - "zc"
+    - "ssc"
+    - "var"
+  spectral:
+    - "mdf"
+    - "mnf"
+    - "band_low"
+    - "band_mid"
+    - "band_high"
+
+evaluation:
+  strategy: "loso"
+  metrics:
+    - "accuracy"
+    - "f1_macro"
+    - "f1_weighted"
+    - "roc_auc_ovr"
+    - "confusion_matrix"
+  test_size: 0.2
+
+baseline:
+  model: "random_forest"
+  n_estimators: 200
+  max_depth: 20
+  min_samples_split: 5
+  min_samples_leaf: 2
+  n_jobs: -1
+  class_weight: "balanced"
+
+cnn_lstm:
+  sequence_length: 10
+  cnn_filters: [64, 128, 256]
+  cnn_kernel_size: 3
+  lstm_hidden: 256
+  lstm_layers: 2
+  dropout: 0.3
+  learning_rate: 0.001
+  batch_size: 64
+  epochs: 100
+  patience: 15
+
+dann:
+  lambda_max: 1.0
+  lambda_schedule: "progressive"
+  warmup_epochs: 10
+  discriminator_hidden: [256, 128]
+  grl_alpha: 10.0
+
+logging:
+  level: "INFO"
+  mlflow_uri: "mlruns"
+  experiment_name: "posture-risk-baseline"

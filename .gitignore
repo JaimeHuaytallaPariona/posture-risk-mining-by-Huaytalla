@@ -1,0 +1,41 @@
+# Datos (demasiado pesados para Git)
+data/raw/
+data/processed/
+*.h5
+*.hdf5
+*.zip
+*.dat
+
+# Modelos entrenados
+models/
+*.pt
+*.pth
+*.onnx
+*.trt
+*.engine
+
+# Entornos
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# IDEs
+.vscode/
+.idea/
+
+# MLflow
+mlruns/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Reportes generados (se regeneran con el código)
+reports/figures/
