@@ -1,0 +1,2 @@
+Modelo,Accuracy,F1-Macro,AUC-OvR,Validación,Dataset
+Random Forest (LOSO baseline),0.833 ± 0.114,0.795 ± 0.212,0.966 ± 0.008,LOSO (n=9 folds),PAMAP2
