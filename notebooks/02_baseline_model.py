@@ -1,6 +1,3 @@
-# ============================================================
-# NOTEBOOK 02 — Baseline model + visualización de resultados
-# ============================================================
 # %% [markdown]
 # # Baseline — Random Forest con validación LOSO
 # Establece la métrica de referencia del proyecto.
