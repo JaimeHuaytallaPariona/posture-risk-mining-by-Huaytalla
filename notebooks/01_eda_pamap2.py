@@ -1,8 +1,3 @@
-# ============================================================
-# NOTEBOOK 01 — EDA del dataset PAMAP2
-# Ejecutar con: jupyter nbconvert --to notebook --execute
-# O convertir a .ipynb con: jupytext --to notebook 01_eda_pamap2.py
-# ============================================================
 # %% [markdown]
 # # EDA — PAMAP2 Physical Activity Monitoring Dataset
 # Análisis exploratorio previo al entrenamiento del modelo.
