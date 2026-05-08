@@ -7,7 +7,7 @@
 [![Dataset: PAMAP2](https://img.shields.io/badge/Dataset-PAMAP2%20UCI-orange)](https://archive.ics.uci.edu/dataset/231/pamap2+physical+activity+monitoring)
 
 > **Tesis de Maestría en Inteligencia Artificial**
-> Autor: Jaime Antonio Huaytalla Pariona | Asesor: Dr. Glen Rodriguez | 2025
+> Autor: Jaime Antonio Huaytalla Pariona | Asesor: Dr. Glen Rodriguez | 2026
 
 ---
 
