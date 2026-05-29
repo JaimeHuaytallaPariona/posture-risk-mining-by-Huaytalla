@@ -1,39 +1,17 @@
 """
-logger.py
----------
-Logger persistente de experimentos en formato CSV.
-
-Cada fila representa un experimento completo con su configuración,
-métricas y costo. El archivo es append-only: nunca se sobrescriben
-filas anteriores, garantizando trazabilidad histórica.
-
-Esquema del CSV (logs/metrics_experimentos.csv):
-  - exp_id           : identificador único del experimento (EXP001, EXP002, ...)
-  - exp_name         : nombre técnico (RF_n200_baseFeats, etc.)
-  - timestamp        : fecha/hora ISO de ejecución
-  - model            : tipo de modelo
-  - feature_set      : conjunto de features usado
-  - n_features       : número total de features
-  - n_samples_train  : tamaño promedio del train por fold
-  - n_samples_test   : tamaño promedio del test por fold
-  - cv_strategy      : esquema de validación
-  - n_folds          : número de folds
-  - seed             : semilla aleatoria
-  - f1_macro_mean    : F1-Macro promedio (métrica principal)
-  - f1_macro_std     : desviación estándar
-  - pr_auc_mean      : PR-AUC One-vs-Rest promedio
-  - pr_auc_std       : desviación estándar
-  - accuracy_mean    : Accuracy promedio
-  - accuracy_std     : desviación estándar
-  - train_time_s     : tiempo total de entrenamiento en segundos
-  - notes            : breve descripción del cambio respecto al baseline
-  - log_path         : ruta al log detallado del experimento
+logger.py  (Sprint 2 — actualizado)
+-------------------------------------
+Cambios respecto a Sprint 1:
+  - Añade campo 'data_hash'   : hash MD5 del HDF5 base (ítem 4 del checklist)
+  - Añade campo 'git_commit'  : hash corto del commit activo en git
+  - Estos dos campos hacen el log completamente auditable (ítem 5)
 """
 
 import csv
+import subprocess
 from datetime import datetime
 from pathlib import Path
-from typing import Dict
+from typing import Dict, Optional
 
 
 CSV_HEADER = [
@@ -45,79 +23,66 @@ CSV_HEADER = [
     "pr_auc_mean",    "pr_auc_std",
     "accuracy_mean",  "accuracy_std",
     "train_time_s",
+    "data_hash",      # NUEVO Sprint 2 — hash MD5 del HDF5 base
+    "git_commit",     # NUEVO Sprint 2 — hash corto del commit activo
     "notes", "log_path",
 ]
 
 
+def get_git_commit() -> str:
+    """Retorna el hash corto del commit activo en git, o 'N/A' si no está disponible."""
+    try:
+        result = subprocess.run(
+            ["git", "rev-parse", "--short", "HEAD"],
+            capture_output=True, text=True, timeout=5
+        )
+        return result.stdout.strip() if result.returncode == 0 else "N/A"
+    except Exception:
+        return "N/A"
+
+
 def append_experiment(record: Dict, csv_path: Path) -> None:
-    """
-    Añade un registro de experimento al CSV de logs.
-
-    Si el archivo no existe, lo crea con el header. Si existe, solo
-    appendea la nueva fila preservando todo el historial.
-
-    Parámetros
-    ----------
-    record   : dict — debe contener TODOS los campos de CSV_HEADER
-    csv_path : Path — ruta al archivo CSV
-    """
+    """Añade un registro al CSV de logs (append-only, nunca sobrescribe)."""
     csv_path = Path(csv_path)
     csv_path.parent.mkdir(parents=True, exist_ok=True)
-
     file_exists = csv_path.exists()
 
     with open(csv_path, "a", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=CSV_HEADER)
         if not file_exists:
             writer.writeheader()
-        # Asegurar todas las columnas presentes
         row = {col: record.get(col, "") for col in CSV_HEADER}
         writer.writerow(row)
 
 
 def next_exp_id(csv_path: Path) -> str:
-    """
-    Calcula el siguiente ID de experimento basado en filas existentes.
-
-    Si el CSV está vacío o no existe, retorna EXP001.
-    Si ya hay N experimentos registrados, retorna EXP{N+1:03d}.
-    """
+    """Calcula el siguiente ID de experimento."""
     csv_path = Path(csv_path)
     if not csv_path.exists():
         return "EXP001"
-
     with open(csv_path, "r", encoding="utf-8") as f:
         reader = csv.reader(f)
         rows = list(reader)
-    n_records = max(0, len(rows) - 1)  # restar header
+    n_records = max(0, len(rows) - 1)
     return f"EXP{n_records + 1:03d}"
 
 
 def make_record(
-    exp_name: str,
-    model: str,
+    exp_name:    str,
+    model:       str,
     feature_set: str,
-    metrics: dict,
-    config: dict,
-    notes: str = "",
-    log_path: str = "",
-    csv_path: Path = Path("logs/metrics_experimentos.csv"),
+    metrics:     dict,
+    config:      dict,
+    notes:       str = "",
+    log_path:    str = "",
+    data_hash:   str = "",        # NUEVO Sprint 2
+    csv_path:    Path = Path("logs/metrics_experimentos.csv"),
 ) -> Dict:
     """
-    Construye un registro de experimento listo para serializar al CSV.
+    Construye un registro de experimento completo para serializar al CSV.
 
-    Parámetros
-    ----------
-    exp_name    : str — nombre técnico (ej. "RF_n200_baseFeats")
-    model       : str — tipo de modelo
-    feature_set : str — identificador del feature set
-    metrics     : dict — debe incluir f1_macro_mean/std, pr_auc_mean/std,
-                  accuracy_mean/std, train_time_s, n_samples_train,
-                  n_samples_test, n_features
-    config      : dict — debe incluir cv_strategy, n_folds, seed
-    notes       : str — descripción de qué cambió respecto al baseline
-    log_path    : str — ruta al log detallado en disco
-    csv_path    : Path — ruta del CSV (para generar exp_id consistente)
+    Parámetros nuevos en Sprint 2:
+      data_hash : hash MD5 del archivo HDF5 base (para ítem 4 del checklist)
     """
     return {
         "exp_id":          next_exp_id(csv_path),
@@ -138,6 +103,8 @@ def make_record(
         "accuracy_mean":   f"{metrics['accuracy_mean']:.4f}",
         "accuracy_std":    f"{metrics['accuracy_std']:.4f}",
         "train_time_s":    f"{metrics['train_time_s']:.2f}",
+        "data_hash":       data_hash,              # NUEVO Sprint 2
+        "git_commit":      get_git_commit(),       # NUEVO Sprint 2
         "notes":           notes,
         "log_path":        log_path,
     }
