@@ -1,0 +1,2 @@
+trial_id,phase,params,seed,split_cfg,metric_mean,metric_std,n_trees_mean,train_time_s,status,timestamp
+0,random,learning_rate=0.0073 | max_depth=10 | min_child_weight=1.5703 | subsample=0.7993 | colsample_bytree=0.5780,42,GroupKFold-3fold,0.8690,0.0207,1000,1448.7,complete,2026-06-05T11:50:47

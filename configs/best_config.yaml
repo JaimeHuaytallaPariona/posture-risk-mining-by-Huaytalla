@@ -1,0 +1,13 @@
+model: XGBoost
+sprint: 3
+params:
+  learning_rate: 0.00727491708802781
+  max_depth: 10
+  min_child_weight: 1.5702970884055387
+  subsample: 0.7993292420985183
+  colsample_bytree: 0.5780093202212182
+metadata:
+  trial_id: 0
+  phase: random
+  f1_macro_loso: 0.8083611517695481
+  sprint: 3

@@ -1,0 +1,93 @@
+# =============================================================================
+# search.yaml — Espacio de búsqueda de hiperparámetros
+# Sprint 3 | Sesión 7 — Ing. Glen Rodríguez
+#
+# Principios aplicados (diapositiva 21):
+#   - Solo hiperparámetros con impacto real (≤ 6-8)
+#   - log-scale para learning_rate y min_child_weight (sensibilidad exponencial)
+#   - n_estimators NO se busca: se fija alto + early stopping nativo de XGBoost
+#   - Todo lo demás fijo: seed, splits, métrica central
+# =============================================================================
+
+study:
+  name:             "xgb-hparam-tuning"
+  direction:        "maximize"           # maximizar F1-Macro
+  n_trials:         30                   # presupuesto total
+  n_startup_trials: 15                   # fase 1: Random (calentamiento)
+                                         # fase 2: Bayes/TPE (trials 16-30)
+  seed:             42
+  timeout_per_trial: 600                 # 10 min máx por trial (seguridad)
+
+pruner:
+  type:             "MedianPruner"
+  n_startup_trials: 5                    # no podar los primeros 5 trials
+  n_warmup_steps:   1                    # esperar al menos 1 fold reportado
+
+cv_search:
+  strategy:         "GroupKFold"
+  n_splits:         3                    # 3-fold para velocidad durante búsqueda
+  group_by:         "subject_id"
+  seed:             42
+
+# ── Espacio de búsqueda XGBoost (diapositiva 2, literal del asesor) ──────────
+search_space:
+  learning_rate:
+    type: "loguniform"
+    low:  1.0e-3
+    high: 0.2
+  max_depth:
+    type: "int"
+    low:  3
+    high: 10
+  min_child_weight:
+    type: "loguniform"
+    low:  1.0e-2
+    high: 10.0
+  subsample:
+    type: "uniform"
+    low:  0.5
+    high: 1.0
+  colsample_bytree:
+    type: "uniform"
+    low:  0.5
+    high: 1.0
+
+# Fijos durante la búsqueda (no se incluyen en el espacio)
+fixed_params:
+  n_estimators:          1000    # alto; early stopping decide el nº real de árboles
+  early_stopping_rounds: 50      # detener si val F1 no mejora en 50 rondas
+  eval_fraction:         0.15    # fracción de train usada como eval para early stopping
+  tree_method:           "hist"
+  eval_metric:           "mlogloss"
+  verbosity:             0
+
+# ── Evaluación final del ganador ─────────────────────────────────────────────
+final_evaluation:
+  strategy:   "GroupKFold-LOSO"
+  n_splits:   9                  # evaluación completa LOSO con 9 sujetos
+
+# ── Baseline de referencia (Sprint 2) ────────────────────────────────────────
+baseline:
+  model:     "XGB_n200_baseFeats"
+  f1_macro:  0.8108
+  pr_auc:    0.8863
+  sprint:    2
+
+# ── Criterio de decisión ─────────────────────────────────────────────────────
+decision:
+  min_improvement:   0.005      # 0.5% sobre baseline para adoptar
+  top_k:             5
+  n_backup_configs:  2
+
+# ── Rutas ────────────────────────────────────────────────────────────────────
+paths:
+  base_h5:          "data/processed/pamap2_features.h5"
+  log_csv:          "logs/hpo_runs.csv"
+  best_random:      "models/best_random.json"
+  best_bayes:       "models/best_bayes.pkl"
+  optuna_study:     "models/optuna_study.pkl"
+  best_config:      "configs/best_config.yaml"
+  table_topk:       "reports/hparam_top5_table.csv"
+  figures:          "reports/figures"
+  mlflow_uri:       "mlruns"
+  mlflow_experiment: "hparam-tuning-xgb"
