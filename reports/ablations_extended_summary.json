@@ -1,0 +1,25 @@
+{
+  "ablation_1_validation": {
+    "loso_f1": 0.8139882445263447,
+    "loso_f1_std": 0.20017940735680673,
+    "stratified_f1": 0.9311424022980253,
+    "stratified_f1_std": 0.0012833149081295687,
+    "delta_f1": 0.11715415777168059,
+    "leakage_in_stratified": 81,
+    "conclusion": "StratifiedKFold infla F1 en 11.72% por leakage. GroupKFold-LOSO es obligatorio."
+  },
+  "ablation_2_scaling": {
+    "with_scaler_f1": 0.8139882445263447,
+    "no_scaler_f1": 0.8139097434431011,
+    "delta_f1": -7.850108324358729e-05,
+    "conclusion": "Diferencia -0.01%. XGBoost invariante al escalado (esperado: \u00e1rboles de decisi\u00f3n)."
+  },
+  "ablation_3_segments": {
+    "all_f1": 0.8139882445263447,
+    "hand_f1": 0.7105000680031146,
+    "chest_f1": 0.713758238837917,
+    "ankle_f1": 0.7130768855266248,
+    "best_individual": "chest",
+    "conclusion": "Mejor segmento individual: chest. Combinar segmentos sigue siendo \u00f3ptimo."
+  }
+}

@@ -1,0 +1,9 @@
+Ablación,Variante,F1-Macro,Accuracy,Tiempo (s),Δ vs referencia,Conclusión
+1. Validación,GroupKFold-LOSO (referencia),0.8140 ± 0.2002,0.8570 ± 0.0925,377.4,—,Esquema metodológicamente correcto
+1. Validación,StratifiedKFold-9 (random),0.9311 ± 0.0013,0.9339 ± 0.0012,365.7,+0.1172,Infla F1 +11.72% por leakage biométrico
+2. Preprocesamiento,Con StandardScaler (referencia),0.8140 ± 0.2002,0.8570 ± 0.0925,377.4,—,Mantenido por consistencia de Pipeline
+2. Preprocesamiento,Sin StandardScaler,0.8139 ± 0.2034,0.8541 ± 0.1034,362.7,-0.0001,XGBoost robusto al escalado
+3. Segmento corporal,Solo hand (99 features),0.7105 ± 0.2028,0.7401 ± 0.1680,120.6,-0.1035,Información parcial
+3. Segmento corporal,Solo chest (99 features),0.7138 ± 0.1991,0.7356 ± 0.1548,118.0,-0.1002,Información parcial
+3. Segmento corporal,Solo ankle (99 features),0.7131 ± 0.1569,0.7657 ± 0.0286,110.6,-0.1009,Información parcial
+3. Segmento corporal,"Todos los segmentos (referencia, 297 features)",0.8140 ± 0.2002,0.8570 ± 0.0925,377.4,—,Combinación informativa óptima
