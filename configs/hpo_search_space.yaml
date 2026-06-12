@@ -1,0 +1,111 @@
+# =============================================================================
+# hpo_search_space.yaml — Sprint 3: Búsqueda de Hiperparámetros
+# Sigue las recomendaciones del Ing. Glen Rodríguez (sesión 7).
+# =============================================================================
+
+experiment:
+  name:        "hpo-xgboost-v1"
+  description: "Búsqueda de hiperparámetros para XGBoost adoptado en Sprint 1"
+  base_model:  "XGB_n200_baseFeats"
+  base_f1:     0.8108              # baseline F1-Macro a superar
+
+# ── Espacio de búsqueda (slide 10 de la sesión 7) ────────────────────────────
+# 5 hiperparámetros, dentro del límite ≤6-8 que recomienda el asesor.
+# n_estimators NO se optimiza directamente: se fija alto y se usa early stopping.
+search_space:
+  learning_rate:
+    type:  "loguniform"
+    low:   1.0e-3
+    high:  0.2
+    scale: "log"
+  max_depth:
+    type: "int"
+    low:  3
+    high: 10
+  min_child_weight:
+    type:  "loguniform"
+    low:   1.0e-2
+    high:  10.0
+    scale: "log"
+  subsample:
+    type: "uniform"
+    low:  0.5
+    high: 1.0
+  colsample_bytree:
+    type: "uniform"
+    low:  0.5
+    high: 1.0
+
+# ── Hiperparámetros fijos (no se optimizan) ──────────────────────────────────
+fixed_params:
+  n_estimators:           500       # alto; early stopping decide el real
+  early_stopping_rounds:  20        # XGBoost early stopping nativo
+  tree_method:            "hist"
+  eval_metric:            "mlogloss"
+  random_state:           42        # seed fijo para reproducibilidad
+  n_jobs:                 -1
+  verbosity:              0
+
+# ── Estudios a ejecutar ──────────────────────────────────────────────────────
+# Estrategia híbrida del asesor (slide 7): comparar Random vs TPE con warm-up
+studies:
+  random:
+    sampler:       "RandomSampler"
+    n_trials:      30
+    seed:          42
+
+  bayesian:
+    sampler:       "TPESampler"
+    n_trials:      30
+    n_startup_trials: 10           # warm-up aleatorio antes de TPE (slide 7)
+    seed:          42
+
+# ── Validación durante HPO ───────────────────────────────────────────────────
+# Slide 14: "Misma validación que la Semana 6 (Stratified / Group / TimeSeriesSplit)"
+# Para tuning usamos GroupKFold(3) por velocidad; el ganador se re-valida LOSO.
+validation:
+  tuning:
+    strategy:      "GroupKFold"
+    n_splits:      3              # 3-fold para velocidad de HPO
+    group_by:      "subject_id"
+    early_stopping_split_ratio: 0.20  # 20% de grupos del train para early stopping
+
+  final:
+    strategy:      "GroupKFold-LOSO"
+    n_splits:      9              # LOSO completo para validación final
+    group_by:      "subject_id"
+
+# ── Pruning (Optuna) ────────────────────────────────────────────────────────
+pruning:
+  enabled:           true
+  pruner:            "MedianPruner"
+  n_startup_trials:  5             # no podar antes de 5 trials completos
+  n_warmup_steps:    1             # no podar antes del fold 1
+  interval_steps:    1
+
+# ── Métrica objetivo ─────────────────────────────────────────────────────────
+metric:
+  primary:           "f1_macro"
+  direction:         "maximize"
+
+# ── Presupuesto (slide 13) ───────────────────────────────────────────────────
+budget:
+  total_trials:      60            # 30 Random + 30 Bayesian
+  expected_time_min: 90
+  timeout_s:         null          # sin timeout duro
+
+# ── Rutas ────────────────────────────────────────────────────────────────────
+paths:
+  base_h5:           "data/processed/pamap2_features.h5"
+  studies_dir:       "optuna_studies"
+  models_dir:        "models"
+  log_csv:           "logs/hpo_runs.csv"
+  figures:           "reports/figures"
+  results_csv:       "reports/hpo_results_top10.csv"
+
+# ── Decisión (slide 20) ──────────────────────────────────────────────────────
+# "Elegir config ganadora + 1–2 configs de respaldo"
+decision:
+  primary_metric:    "f1_macro"
+  min_improvement:   0.005          # mejora mínima sobre baseline para adoptar
+  n_backup_configs:  2              # número de configs de respaldo a reportar

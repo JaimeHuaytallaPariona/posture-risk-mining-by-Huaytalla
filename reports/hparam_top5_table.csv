@@ -1,2 +1,0 @@
-rank,trial,phase,params_resumidos,f1_macro_mean,tiempo_s,notas
-1,0,random,"learning_rate=0.0073, max_depth=10, min_child_weight=1.5703, subsample=0.7993, colsample_bytree=0.5780",0.8690,1449,ganador
