@@ -39,3 +39,26 @@ Thumbs.db
 
 # Reportes generados (se regeneran con el código)
 reports/figures/
+
+# Artefactos regenerables (sprint 7)
+data/examples/sample_windows.npz
+data/examples/sample_input.json
+data/examples/e2e_output.json
+data/examples/*.npz
+logs/inference_metrics.csv
+logs/*.log
+
+# Golden test se conserva pero el metrics CSV no
+tests/golden/golden_predictions.json
+
+# Modelos entrenados (regenerables con make train)
+models/best_xgb.pkl
+models/calibrators.pkl
+models/thresholds.json
+
+# Entornos y caché
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.ipynb_checkpoints/

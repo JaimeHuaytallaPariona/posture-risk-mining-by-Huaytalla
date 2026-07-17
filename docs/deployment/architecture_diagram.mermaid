@@ -1,0 +1,58 @@
+%% Diagrama de arquitectura del sistema (Módulo CLI)
+%% Sprint 7 - Sesión 13 del asesor, slide 8
+
+flowchart TB
+  subgraph "INGESTA DE DATOS"
+    IMU["Sensores IMU (27 canales)<br/>Muñeca + Pecho + Tobillo"]
+    RAW["Señales crudas<br/>100 Hz"]
+    IMU --> RAW
+  end
+
+  subgraph "PIPELINE DE PREPARACIÓN"
+    WIN["Ventaneo<br/>200 ms / 50% overlap"]
+    FEAT["Extracción de features<br/>297 = 27ch × 11 stats"]
+    RAW --> WIN --> FEAT
+  end
+
+  subgraph "MÓDULO CLI: posture_risk.predict"
+    CTR["Contratos I/O<br/>Pydantic v2"]
+    STG1["1. Preprocess"]
+    STG2["2. Escalado<br/>StandardScaler"]
+    STG3["3. Inferencia<br/>XGBoost HPO"]
+    STG4["4. Calibración<br/>Isotónica"]
+    STG5["5. Umbral por clase<br/>prioridad 1.5x Alto"]
+    OUT["Salida:<br/>predicción + probs +<br/>latencia + versión"]
+
+    CTR --> STG1 --> STG2 --> STG3 --> STG4 --> STG5 --> OUT
+  end
+
+  FEAT --> CTR
+
+  subgraph "OBSERVABILIDAD"
+    LOG["Logs estructurados<br/>loguru + request_id"]
+    MET["Métricas CSV<br/>p50/p95 por invocación"]
+    OUT --> LOG
+    OUT --> MET
+  end
+
+  subgraph "CONSUMIDORES"
+    ALERTA["Alerta al operador<br/>en Jetson (edge)"]
+    DASH["Dashboard offline<br/>análisis batch"]
+    OUT --> ALERTA
+    MET --> DASH
+  end
+
+  subgraph "ARTEFACTOS PERSISTIDOS"
+    MOD["models/best_xgb.pkl"]
+    CAL["models/calibrators.pkl"]
+    THR["models/thresholds.json"]
+    MOD --> STG3
+    CAL --> STG4
+    THR --> STG5
+  end
+
+  style CTR fill:#D9E2F3,stroke:#1F3864
+  style STG3 fill:#FFF2CC,stroke:#BF8F00
+  style STG4 fill:#FFF2CC,stroke:#BF8F00
+  style STG5 fill:#FFF2CC,stroke:#BF8F00
+  style OUT fill:#D5E8D4,stroke:#1D9E75

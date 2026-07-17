@@ -1,0 +1,66 @@
+# =============================================================================
+# environment.yml — Sprint 7: Empaquetado y despliegue mínimo
+# Especificación completa del entorno conda para reproducibilidad.
+#
+# Reproducir en una máquina virgen:
+#   conda env create -f environment.yml
+#   conda activate posture-risk
+#
+# Actualizar entorno tras cambios:
+#   conda env update -f environment.yml --prune
+# =============================================================================
+
+name: posture-risk
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  # Núcleo del entorno (versiones fijadas para reproducibilidad)
+  - python=3.10.14
+  - pip=24.0
+  - setuptools>=68.0
+
+  # Ciencia de datos base
+  - numpy=1.26.4
+  - pandas=2.2.2
+  - scipy=1.13.1
+  - h5py=3.11.0
+
+  # ML clásico
+  - scikit-learn=1.5.1
+  - xgboost=2.1.1
+
+  # Optimización de hiperparámetros
+  - optuna=3.6.1
+
+  # Serialización
+  - joblib=1.4.2
+
+  # Visualización
+  - matplotlib=3.9.1
+  - seaborn=0.13.2
+
+  # Notebooks
+  - jupyter=1.0.0
+  - jupyterlab=4.2.4
+  - ipykernel=6.29.5
+  - jupytext=1.16.4
+
+  # Utilidades
+  - pyyaml=6.0.1
+  - tqdm=4.66.4
+
+  # Logging
+  - loguru=0.7.2
+
+  # Testing
+  - pytest=8.3.2
+  - pytest-cov=5.0.0
+
+  # Validación de esquemas I/O (Sprint 7)
+  - pydantic=2.8.2
+
+  # Dependencias vía pip (no disponibles en conda-forge o versiones específicas)
+  - pip:
+      - python-dotenv==1.0.1

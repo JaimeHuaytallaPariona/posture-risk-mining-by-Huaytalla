@@ -1,0 +1,97 @@
+{
+  "descripcion": "Ejemplos válidos, inválidos y de borde para el módulo posture_risk.predict",
+  "referencia": "Sesión 13 del asesor, slide 9: 'Anexar al plan: esquemas JSON + 2-3 ejemplos (válido/erróneo/borde)'",
+  "n_features_esperados": 297,
+
+  "ejemplo_valido": {
+    "descripcion": "Ventana con features en rango razonable, request_id UUID válido, subject_hint y timestamp opcionales presentes",
+    "input": {
+      "request_id": "a3f8c9d2-1e2f-4a5b-8c9d-0e1f2a3b4c5d",
+      "features_summary": "297 valores float en rango [-3.0, 3.0] (ver features_full en sample_windows.npz)",
+      "subject_hint": 101,
+      "timestamp": "2026-07-15T10:30:00Z"
+    },
+    "output_esperado": {
+      "request_id": "a3f8c9d2-1e2f-4a5b-8c9d-0e1f2a3b4c5d",
+      "prediction": "medio",
+      "probabilities": [0.15, 0.72, 0.13],
+      "confidence": 0.72,
+      "latency_ms": 12.4,
+      "model_version": "v1.0.0",
+      "pipeline_stages": ["preprocess", "scale", "infer_xgb", "calibrate", "threshold"],
+      "served_at": "2026-07-15T10:30:00.145Z"
+    }
+  },
+
+  "ejemplo_invalido_nan_en_features": {
+    "descripcion": "features contiene NaN en el índice 42, causado por interpolación fallida aguas arriba",
+    "input": {
+      "request_id": "b4a9d0e3-2f3a-5b6c-9d0e-1f2a3b4c5d6e",
+      "features_summary": "296 valores válidos + features[42] = NaN",
+      "subject_hint": 103,
+      "timestamp": "2026-07-15T10:31:00Z"
+    },
+    "error_esperado": {
+      "request_id": "b4a9d0e3-2f3a-5b6c-9d0e-1f2a3b4c5d6e",
+      "code": "E001_INVALID_INPUT",
+      "message": "features[42] es NaN (no admitido)",
+      "hint": "Verifique el pipeline de extracción; NaN típicamente aparece por interpolación fallida en señal cruda",
+      "field": "features",
+      "timestamp": "2026-07-15T10:31:00Z"
+    }
+  },
+
+  "ejemplo_invalido_longitud_incorrecta": {
+    "descripcion": "features tiene 296 valores en lugar de 297 (probablemente un canal se cayó del pipeline)",
+    "input": {
+      "request_id": "c5b0e1f4-3a4b-6c7d-0e1f-2a3b4c5d6e7f",
+      "features_summary": "296 valores float en rango razonable",
+      "subject_hint": 105,
+      "timestamp": "2026-07-15T10:32:00Z"
+    },
+    "error_esperado": {
+      "code": "E001_INVALID_INPUT",
+      "message": "List should have at least 297 items after validation",
+      "hint": "El vector debe tener exactamente 297 features (27 canales × 11 features). Verificar que los 3 segmentos IMU estén activos.",
+      "field": "features"
+    }
+  },
+
+  "ejemplo_borde_probabilidad_uniforme": {
+    "descripcion": "Ventana ambigua donde el modelo produce ~equiprobabilidad (caso adversarial del sprint 5)",
+    "input": {
+      "request_id": "d6c1f2a5-4b5c-7d8e-1f2a-3b4c5d6e7f80",
+      "features_summary": "297 valores float en ventana de transición postural",
+      "subject_hint": 108,
+      "timestamp": "2026-07-15T10:33:00Z"
+    },
+    "output_esperado": {
+      "request_id": "d6c1f2a5-4b5c-7d8e-1f2a-3b4c5d6e7f80",
+      "prediction": "medio",
+      "probabilities": [0.33, 0.36, 0.31],
+      "confidence": 0.36,
+      "latency_ms": 11.8,
+      "model_version": "v1.0.0",
+      "pipeline_stages": ["preprocess", "scale", "infer_xgb", "calibrate", "threshold"],
+      "notas": "Confianza baja (0.36) tras calibración isotónica. En producción se recomienda emitir una alerta de 'confianza reducida' junto con la predicción."
+    }
+  },
+
+  "ejemplo_borde_valor_extremo": {
+    "descripcion": "Ventana con feature en el límite superior del rango permitido (1e6), potencialmente indica saturación del sensor",
+    "input": {
+      "request_id": "e7d2a3b6-5c6d-8e9f-2a3b-4c5d6e7f8091",
+      "features_summary": "296 valores en rango razonable + features[15] = 1e6 (límite)",
+      "subject_hint": 102,
+      "timestamp": "2026-07-15T10:34:00Z"
+    },
+    "output_esperado": {
+      "descripcion": "El input es válido pero produce advertencia en logs por posible saturación del sensor",
+      "prediction": "alto",
+      "probabilities": [0.05, 0.10, 0.85],
+      "confidence": 0.85,
+      "latency_ms": 12.1,
+      "advertencia_en_logs": "features[15]=1e6 en el límite superior; posible saturación del sensor IMU"
+    }
+  }
+}
