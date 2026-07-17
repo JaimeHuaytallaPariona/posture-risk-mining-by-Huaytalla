@@ -1,5 +1,7 @@
 # Aprendizaje por Transferencia Optimizado para la Detección de Posturas Riesgosas de Extremidades Superiores en Operadores Perforistas en Unidades Mineras
 
+![Tests](https://github.com/JaimeHuaytallaPariona/posture-risk-mining-by-Huaytalla/actions/workflows/tests.yml/badge.svg?branch=experiments/feature-engineering-v1)
+
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/TU_USUARIO/posture-risk-mining/actions/workflows/ci.yml/badge.svg)](https://github.com/TU_USUARIO/posture-risk-mining/actions)
