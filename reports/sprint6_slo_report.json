@@ -1,0 +1,57 @@
+{
+  "slos": {
+    "latency_p95_ms": {
+      "slo_name": "Latencia p95 por ventana",
+      "threshold": 200.0,
+      "unit": "ms",
+      "measured": 2.8114300919696684,
+      "comparison": "less_than",
+      "passed": true,
+      "critical": true,
+      "justification": "Las ventanas de entrada son de 200 ms con 50% de solapamiento; el sistema debe producir una predicci\u00f3n por ventana en menos de 200 ms para sostener el streaming sin acumulaci\u00f3n de cola. El p95 (peor caso realista) es m\u00e1s restrictivo que el p50 y asegura estabilidad temporal del sistema."
+    },
+    "latency_p50_ms": {
+      "slo_name": "Latencia p50 por ventana",
+      "threshold": 100.0,
+      "unit": "ms",
+      "measured": 2.1539999870583415,
+      "comparison": "less_than",
+      "passed": true,
+      "critical": false,
+      "justification": "Mediana de latencia bajo 100 ms garantiza que la mayor\u00eda de predicciones son procesadas con margen amplio, dejando espacio para picos ocasionales."
+    },
+    "throughput_req_per_sec": {
+      "slo_name": "Throughput sostenido",
+      "threshold": 5.0,
+      "unit": "predicciones/segundo",
+      "measured": 465.8371678815905,
+      "comparison": "greater_or_equal",
+      "passed": true,
+      "critical": true,
+      "justification": "Con ventanas de 200 ms y 50% de solapamiento, el sistema debe procesar al menos 10 predicciones/segundo. Se adopta un umbral conservador de 5 pred/s (equivalente a ventanas de 200 ms sin solapamiento) como criterio m\u00ednimo de viabilidad."
+    },
+    "error_rate_pct": {
+      "slo_name": "Tasa de errores en inferencia",
+      "threshold": 1.0,
+      "unit": "%",
+      "measured": 0.0,
+      "comparison": "less_than",
+      "passed": true,
+      "critical": true,
+      "justification": "Errores de inferencia (excepciones, NaN, timeouts) deben ser menos del 1% de las predicciones. En un sistema ergon\u00f3mico, una tasa alta de errores dejar\u00eda al operador sin alertas de riesgo, degradando la seguridad."
+    },
+    "f1_macro_min": {
+      "slo_name": "F1-Macro m\u00ednimo",
+      "threshold": 0.8,
+      "unit": "",
+      "measured": 0.8868449846204527,
+      "comparison": "greater_or_equal",
+      "passed": true,
+      "critical": true,
+      "justification": "F1-Macro m\u00ednimo del sistema en validaci\u00f3n LOSO no debe caer por debajo del baseline RF+2% ni por debajo del 0.80 absoluto. Umbral acordado con asesor."
+    }
+  },
+  "all_passing": true,
+  "critical_failing": [],
+  "deployment_ready": true
+}

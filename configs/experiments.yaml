@@ -1,0 +1,69 @@
+# =============================================================================
+# experiments.yaml — Configuración del experimento A/B
+# Documenta los 3 experimentos con un solo cambio por variante,
+# siguiendo el protocolo del Ing. Glen Rodríguez (sesiones 4 y 5).
+# =============================================================================
+
+experiment:
+  name: "feature-engineering-v1"
+  branch: "experiments/feature-engineering-v1"
+  description: |
+    Experimento A/B con 3 variantes para evaluar si:
+      (a) añadir features biomecánicas de dominio mejora sobre el baseline
+      (b) cambiar Random Forest por XGBoost mejora con las mismas features
+    Mismo split (GroupKFold por sujeto), mismo seed, mismos datos PAMAP2.
+
+# ── Variantes del experimento ────────────────────────────────────────────────
+variants:
+  - name: "RF_n200_baseFeats"
+    role: "baseline"          # A
+    model: "random_forest"
+    n_estimators: 200
+    feature_set: "base"        # 297 features estadísticas
+    notes: "Baseline reproducido: RF + features temporales/espectrales"
+
+  - name: "RF_n200_biomechFeats"
+    role: "variant_1"          # B — cambio único: features
+    model: "random_forest"
+    n_estimators: 200
+    feature_set: "biomech"     # 297 base + 73 biomecánicas = 370 features
+    notes: "Mismo modelo. Cambio único: enriquecimiento con features biomecánicas"
+
+  - name: "XGB_n200_baseFeats"
+    role: "variant_2"          # C — cambio único: modelo
+    model: "xgboost"
+    n_estimators: 200
+    feature_set: "base"        # mismas 297 features del baseline
+    notes: "Mismas features del baseline. Cambio único: RF → XGBoost"
+
+# ── Validación (refuerzo según asesor) ────────────────────────────────────────
+validation:
+  cv_strategy: "GroupKFold"
+  group_by: "subject_id"
+  n_folds: 9                  # = número de sujetos en PAMAP2 → equivale a LOSO
+  seed: 42                    # fijo para reproducibilidad entre variantes
+
+# ── Métricas (sesión 5, diapositiva 11: "métrica central por tipo") ──────────
+metrics:
+  primary: "f1_macro"         # F1 (positiva) recomendado para clasificación
+  secondary:
+    - "pr_auc"                # PR-AUC explícito en la diapositiva 6 del asesor
+    - "accuracy"
+  cost: "train_time_s"
+
+# ── Rutas ────────────────────────────────────────────────────────────────────
+paths:
+  raw_public:       "data/raw/public/PAMAP2/Protocol"
+  processed:        "data/processed"
+  base_h5:          "data/processed/pamap2_features.h5"
+  biomech_h5:       "data/processed/pamap2_biomech_features.h5"
+  log_csv:          "logs/metrics_experimentos.csv"
+  figures:          "reports/figures"
+  table_csv:        "reports/ab_comparison_table.csv"
+
+# ── Criterio de decisión (sesión 5, diapositiva 14) ──────────────────────────
+decision:
+  primary_metric:        "f1_macro"
+  min_improvement:       0.01   # 1% de mejora absoluta para adoptar
+  consider_cost:         true   # rechazar variantes con costo > 3x baseline
+  max_cost_multiplier:   3.0

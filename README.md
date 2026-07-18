@@ -1,5 +1,7 @@
 # Aprendizaje por Transferencia Optimizado para la Detección de Posturas Riesgosas de Extremidades Superiores en Operadores Perforistas en Unidades Mineras
 
+![Tests](https://github.com/JaimeHuaytallaPariona/posture-risk-mining-by-Huaytalla/actions/workflows/tests.yml/badge.svg?branch=experiments/feature-engineering-v1)
+
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python)](https://www.python.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![CI](https://github.com/TU_USUARIO/posture-risk-mining/actions/workflows/ci.yml/badge.svg)](https://github.com/TU_USUARIO/posture-risk-mining/actions)
@@ -114,6 +116,41 @@ posture-risk-mining/
 | 6 | Datos de campo (Dt) | ⏳ Pendiente |
 | 7 | Implementación DANN | ⏳ Pendiente |
 | 8 | Entrenamiento adaptado | ⏳ Pendiente |
+
+---
+
+## Sprints del proyecto
+
+| Sprint | Tema | Documento clave |
+|---|---|---|
+| Sprint 1 | A/B testing (RF vs XGBoost) | `docs/experiments/reporte_AB_semana6.md` |
+| Sprint 2 | Diagnósticos + curvas de aprendizaje | `docs/experiments/sprint2_diagnosticos.md` |
+| Sprint 3 | HPO con Optuna (60 trials) | `docs/experiments/sprint3-hpo.md` |
+| Sprint 4 | Ablaciones extendidas | (integrado al informe parcial) |
+| Sprint 5 | Análisis de errores y slicing | `docs/experiments/sprint5_analisis_errores.md` |
+| Sprint 6 | Prueba con stakeholder y latencia | `docs/experiments/reporte_sprint6_latency.md` |
+| **Sprint 7** | **Empaquetado y despliegue mínimo** | [`docs/deployment/plan_de_despliegue.md`](docs/deployment/plan_de_despliegue.md) |
+
+### Cómo ejecutar el sistema (Sprint 7)
+
+**Windows PowerShell:**
+
+    .\make.ps1 setup
+    .\make.ps1 train
+    python scripts\generate_sample_input.py
+    python -m tests.generate_golden
+    .\make.ps1 e2e
+
+**Linux / Mac / Git Bash:**
+
+    make setup && make train
+    python scripts/generate_sample_input.py
+    python -m tests.generate_golden
+    make e2e
+
+Modelo actual: XGBoost HPO + calibración isotónica + umbrales por clase.
+F1-Macro LOSO = 0.8171 ± 0.2047 sobre PAMAP2.
+SLOs verificados: latencia p95 < 200 ms, throughput ≥ 5 pred/s.
 
 ---
 

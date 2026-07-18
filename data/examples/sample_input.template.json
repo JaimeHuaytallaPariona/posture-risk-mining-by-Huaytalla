@@ -1,0 +1,36 @@
+{
+  "batch_id": "e2e-sample-batch-001",
+  "windows": [
+    {
+      "request_id": "sample-001-baja",
+      "features": "PLACEHOLDER — 297 valores reales serán generados por scripts/train_and_persist.py",
+      "subject_hint": 101,
+      "timestamp": "2026-07-15T10:30:00Z"
+    },
+    {
+      "request_id": "sample-002-baja",
+      "features": "PLACEHOLDER — 297 valores",
+      "subject_hint": 102,
+      "timestamp": "2026-07-15T10:30:00.200Z"
+    },
+    {
+      "request_id": "sample-003-media",
+      "features": "PLACEHOLDER — 297 valores",
+      "subject_hint": 103,
+      "timestamp": "2026-07-15T10:30:00.400Z"
+    },
+    {
+      "request_id": "sample-004-media",
+      "features": "PLACEHOLDER — 297 valores",
+      "subject_hint": 104,
+      "timestamp": "2026-07-15T10:30:00.600Z"
+    },
+    {
+      "request_id": "sample-005-alta",
+      "features": "PLACEHOLDER — 297 valores",
+      "subject_hint": 105,
+      "timestamp": "2026-07-15T10:30:00.800Z"
+    }
+  ],
+  "_nota": "Este archivo es una plantilla. El sample real con 297 features por ventana se genera automáticamente por `make train` (invocando `scripts/train_and_persist.py`) desde el dataset PAMAP2. La plantilla se conserva en git; el sample real se genera localmente y NO se sube."
+}

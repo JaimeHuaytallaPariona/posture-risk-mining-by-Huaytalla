@@ -1,0 +1,8 @@
+Métrica,Baseline RF,Modelo actual
+F1-Macro (CV LOSO),0.7942 ± 0.2003,0.8868
+Recall clase Alto,0.9895,0.8831
+Latencia p50 (ms),91.408,2.154
+Latencia p95 (ms),101.250,2.811
+Latencia p99 (ms),112.730,3.394
+Throughput (pred/s),10.9,465.8
+Falsas alarmas/hora,290.8,607.9

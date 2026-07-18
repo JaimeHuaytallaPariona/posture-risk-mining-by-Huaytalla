@@ -1,0 +1,11 @@
+rank,trial_id,sampler,F1_mean,F1_std,n_trees,time_s,learning_rate,max_depth,min_child_weight,subsample,colsample_bytree
+1,bayesian_023,TPESampler,0.8711,0.0158,201,122.3,0.12265,6,0.0403,0.722,0.891
+2,bayesian_028,TPESampler,0.8708,0.0144,227,185.2,0.06239,8,9.7426,0.559,0.999
+3,bayesian_016,TPESampler,0.8704,0.0149,351,206.2,0.04807,6,0.1716,0.644,0.998
+4,bayesian_015,TPESampler,0.8702,0.0157,240,140.4,0.07513,6,0.0291,0.842,0.931
+5,random_016,RandomSampler,0.8701,0.0163,211,259.4,0.04758,9,0.0167,0.679,0.558
+6,random_011,RandomSampler,0.8699,0.0161,82,90.0,0.17023,9,6.5841,0.947,0.799
+7,bayesian_022,TPESampler,0.8698,0.0153,428,191.2,0.04509,5,0.0287,0.710,0.870
+8,bayesian_021,TPESampler,0.8695,0.0151,439,190.3,0.04342,5,0.0300,0.830,0.788
+9,random_017,RandomSampler,0.8694,0.0159,145,104.3,0.09683,7,0.0983,0.532,0.655
+10,random_008,RandomSampler,0.8693,0.0162,337,144.3,0.07247,5,0.0196,0.842,0.720

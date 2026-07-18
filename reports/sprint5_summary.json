@@ -1,0 +1,89 @@
+{
+  "global_f1_oof": 0.8849161155556237,
+  "total_slices_analyzed": 26,
+  "problematic_slices": [
+    {
+      "dimension": "sujeto",
+      "slice_name": 9,
+      "n": 638,
+      "f1_macro": 0.25048923679060664,
+      "gap": 0.634426878765017,
+      "class_dist": {
+        "0": 0,
+        "1": 0,
+        "2": 638
+      }
+    },
+    {
+      "dimension": "actividad PAMAP2",
+      "slice_name": "saltar",
+      "n": 4926,
+      "f1_macro": 0.2873642873642874,
+      "gap": 0.5975518281913363,
+      "class_dist": {
+        "0": 0,
+        "1": 0,
+        "2": 4926
+      }
+    },
+    {
+      "dimension": "actividad PAMAP2",
+      "slice_name": "caminar",
+      "n": 23861,
+      "f1_macro": 0.29267566339085593,
+      "gap": 0.5922404521647677,
+      "class_dist": {
+        "0": 23861,
+        "1": 0,
+        "2": 0
+      }
+    },
+    {
+      "dimension": "actividad PAMAP2",
+      "slice_name": "escaleras_abajo",
+      "n": 10485,
+      "f1_macro": 0.30298300381547,
+      "gap": 0.5819331117401536,
+      "class_dist": {
+        "0": 0,
+        "1": 10485,
+        "2": 0
+      }
+    },
+    {
+      "dimension": "actividad PAMAP2",
+      "slice_name": "de_pie",
+      "n": 18985,
+      "f1_macro": 0.3058928605362674,
+      "gap": 0.5790232550193563,
+      "class_dist": {
+        "0": 18985,
+        "1": 0,
+        "2": 0
+      }
+    }
+  ],
+  "mitigation_1_thresholds": {
+    "thresholds": {
+      "0": 0.36110740900039673,
+      "1": 0.5693613290786743,
+      "2": 0.49479949474334717
+    },
+    "f1_before": 0.8849161155556237,
+    "f1_after": 0.8872661719913308,
+    "f1_delta": 0.002350056435707182,
+    "recall_alto_before": 0.8933367880122641,
+    "recall_alto_after": 0.891263980653798,
+    "recall_alto_delta": -0.0020728073584661555,
+    "h1_confirmed": false
+  },
+  "mitigation_2_calibration": {
+    "f1_before": 0.8849161155556237,
+    "f1_after": 0.8875617874747176,
+    "f1_delta": 0.002645671919093928,
+    "brier_before": 0.05529314403732618,
+    "brier_after": 0.05404640858372053,
+    "brier_delta": -0.0012467354536056519,
+    "h2_confirmed": false
+  }
+}

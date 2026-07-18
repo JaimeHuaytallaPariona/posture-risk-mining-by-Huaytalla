@@ -1,0 +1,19 @@
+%% Diagrama de flujo E2E "en limpio" (Sprint 7, sesión 13 slide 11)
+%% Ejecución sobre máquina virgen
+
+flowchart LR
+  A[["Máquina virgen<br/>Windows + Miniconda"]] -->|make setup| B[/"Entorno conda<br/>posture-risk<br/>lockfile"/]
+  B -->|make train| C[/"Artefactos:<br/>best_xgb.pkl<br/>calibrators.pkl<br/>thresholds.json"/]
+  C -->|make predict| D[["Predicción<br/>batch sobre<br/>sample_input.json"]]
+  D --> E{"verify_e2e_output.py<br/>hash + campos + latencia"}
+  E -->|OK| F[/"data/examples/<br/>e2e_output.json"/]
+  E -->|FAIL| X[["Detener y reportar<br/>diagnóstico"]]
+  F -->|make test| G["Smoke tests<br/>7 tests"]
+  G --> H["Golden tests<br/>10 ventanas fijas"]
+  H -->|PASS| Y[["ÉXITO<br/>Sistema listo"]]
+  H -->|FAIL| Z[["Diagnóstico<br/>regenerar dorado<br/>o revertir"]]
+
+  style A fill:#F2F2F2,stroke:#666
+  style Y fill:#D5E8D4,stroke:#1D9E75
+  style X fill:#F8CECC,stroke:#B85450
+  style Z fill:#F8CECC,stroke:#B85450

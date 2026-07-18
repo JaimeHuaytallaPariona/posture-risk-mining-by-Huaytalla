@@ -1,0 +1,240 @@
+{
+  "slos": {
+    "slos": {
+      "latency_p95_ms": {
+        "slo_name": "Latencia p95 por ventana",
+        "threshold": 200.0,
+        "unit": "ms",
+        "measured": 2.8114300919696684,
+        "comparison": "less_than",
+        "passed": true,
+        "critical": true,
+        "justification": "Las ventanas de entrada son de 200 ms con 50% de solapamiento; el sistema debe producir una predicci\u00f3n por ventana en menos de 200 ms para sostener el streaming sin acumulaci\u00f3n de cola. El p95 (peor caso realista) es m\u00e1s restrictivo que el p50 y asegura estabilidad temporal del sistema."
+      },
+      "latency_p50_ms": {
+        "slo_name": "Latencia p50 por ventana",
+        "threshold": 100.0,
+        "unit": "ms",
+        "measured": 2.1539999870583415,
+        "comparison": "less_than",
+        "passed": true,
+        "critical": false,
+        "justification": "Mediana de latencia bajo 100 ms garantiza que la mayor\u00eda de predicciones son procesadas con margen amplio, dejando espacio para picos ocasionales."
+      },
+      "throughput_req_per_sec": {
+        "slo_name": "Throughput sostenido",
+        "threshold": 5.0,
+        "unit": "predicciones/segundo",
+        "measured": 465.8371678815905,
+        "comparison": "greater_or_equal",
+        "passed": true,
+        "critical": true,
+        "justification": "Con ventanas de 200 ms y 50% de solapamiento, el sistema debe procesar al menos 10 predicciones/segundo. Se adopta un umbral conservador de 5 pred/s (equivalente a ventanas de 200 ms sin solapamiento) como criterio m\u00ednimo de viabilidad."
+      },
+      "error_rate_pct": {
+        "slo_name": "Tasa de errores en inferencia",
+        "threshold": 1.0,
+        "unit": "%",
+        "measured": 0.0,
+        "comparison": "less_than",
+        "passed": true,
+        "critical": true,
+        "justification": "Errores de inferencia (excepciones, NaN, timeouts) deben ser menos del 1% de las predicciones. En un sistema ergon\u00f3mico, una tasa alta de errores dejar\u00eda al operador sin alertas de riesgo, degradando la seguridad."
+      },
+      "f1_macro_min": {
+        "slo_name": "F1-Macro m\u00ednimo",
+        "threshold": 0.8,
+        "unit": "",
+        "measured": 0.8868449846204527,
+        "comparison": "greater_or_equal",
+        "passed": true,
+        "critical": true,
+        "justification": "F1-Macro m\u00ednimo del sistema en validaci\u00f3n LOSO no debe caer por debajo del baseline RF+2% ni por debajo del 0.80 absoluto. Umbral acordado con asesor."
+      }
+    },
+    "all_passing": true,
+    "critical_failing": [],
+    "deployment_ready": true
+  },
+  "latency_baseline": {
+    "stages": {
+      "1_scale": {
+        "stage": "1_scale",
+        "n_repeats": 500,
+        "n_errors": 0,
+        "error_rate_pct": 0.0,
+        "p50_ms": 0.22190005984157324,
+        "p95_ms": 0.3790498711168764,
+        "p99_ms": 0.4678861820138989,
+        "mean_ms": 0.2315127975307405,
+        "std_ms": 0.07233585950297705,
+        "min_ms": 0.15130010433495045,
+        "max_ms": 0.6592001300305128
+      },
+      "2_infer_rf": {
+        "stage": "2_infer_rf",
+        "n_repeats": 500,
+        "n_errors": 0,
+        "error_rate_pct": 0.0,
+        "p50_ms": 92.03359996899962,
+        "p95_ms": 101.58828503917903,
+        "p99_ms": 105.05761099047956,
+        "mean_ms": 92.15261079370975,
+        "std_ms": 5.159371835864923,
+        "min_ms": 81.00220002233982,
+        "max_ms": 116.5610000025481
+      },
+      "3_argmax": {
+        "stage": "3_argmax",
+        "n_repeats": 500,
+        "n_errors": 0,
+        "error_rate_pct": 0.0,
+        "p50_ms": 0.003300141543149948,
+        "p95_ms": 0.00809994526207447,
+        "p99_ms": 0.016741009894758425,
+        "mean_ms": 0.0047545949928462505,
+        "std_ms": 0.0066288511133236715,
+        "min_ms": 0.0030999071896076202,
+        "max_ms": 0.09620003402233124
+      }
+    },
+    "total": {
+      "stage": "total",
+      "n_repeats": 500,
+      "n_errors": 0,
+      "error_rate_pct": 0.0,
+      "p50_ms": 91.40849998220801,
+      "p95_ms": 101.24951013131067,
+      "p99_ms": 112.7300868113525,
+      "mean_ms": 93.17335899639875,
+      "std_ms": 35.5201535377533,
+      "min_ms": 81.18370012380183,
+      "max_ms": 875.6386998575181
+    },
+    "n_repeats": 500,
+    "n_warmup": 50
+  },
+  "latency_actual": {
+    "stages": {
+      "1_preprocess": {
+        "stage": "1_preprocess",
+        "n_repeats": 500,
+        "n_errors": 0,
+        "error_rate_pct": 0.0,
+        "p50_ms": 0.00300002284348011,
+        "p95_ms": 0.004299916326999664,
+        "p99_ms": 0.009908960200846187,
+        "mean_ms": 0.003690600860863924,
+        "std_ms": 0.008546716991134273,
+        "min_ms": 0.0013997778296470642,
+        "max_ms": 0.11440017260611057
+      },
+      "2_scale": {
+        "stage": "2_scale",
+        "n_repeats": 500,
+        "n_errors": 0,
+        "error_rate_pct": 0.0,
+        "p50_ms": 0.26985001750290394,
+        "p95_ms": 0.4372050752863288,
+        "p99_ms": 0.5275009432807565,
+        "mean_ms": 0.28515719529241323,
+        "std_ms": 0.11816651751341467,
+        "min_ms": 0.15590013936161995,
+        "max_ms": 1.9056000746786594
+      },
+      "3_infer_xgb": {
+        "stage": "3_infer_xgb",
+        "n_repeats": 500,
+        "n_errors": 0,
+        "error_rate_pct": 0.0,
+        "p50_ms": 0.7791999960318208,
+        "p95_ms": 0.9422199567779895,
+        "p99_ms": 1.123073936905712,
+        "mean_ms": 0.8625866058282554,
+        "std_ms": 1.388726982585771,
+        "min_ms": 0.6719999946653843,
+        "max_ms": 31.782800098881125
+      },
+      "4_calibrate": {
+        "stage": "4_calibrate",
+        "n_repeats": 500,
+        "n_errors": 0,
+        "error_rate_pct": 0.0,
+        "p50_ms": 1.0456000454723835,
+        "p95_ms": 1.376524998340755,
+        "p99_ms": 1.5693270671181372,
+        "mean_ms": 1.0547366011887789,
+        "std_ms": 0.19611292819315673,
+        "min_ms": 0.5651998799294233,
+        "max_ms": 2.3771999403834343
+      },
+      "5_threshold": {
+        "stage": "5_threshold",
+        "n_repeats": 500,
+        "n_errors": 0,
+        "error_rate_pct": 0.0,
+        "p50_ms": 0.0034999102354049683,
+        "p95_ms": 0.008600065484642982,
+        "p99_ms": 0.015437116380780902,
+        "mean_ms": 0.00488599669188261,
+        "std_ms": 0.007876097814738543,
+        "min_ms": 0.0033997930586338043,
+        "max_ms": 0.16339984722435474
+      }
+    },
+    "total": {
+      "stage": "total",
+      "n_repeats": 500,
+      "n_errors": 0,
+      "error_rate_pct": 0.0,
+      "p50_ms": 2.1539999870583415,
+      "p95_ms": 2.8114300919696684,
+      "p99_ms": 3.3936179825104755,
+      "mean_ms": 2.286600200459361,
+      "std_ms": 0.3298196327479358,
+      "min_ms": 1.9597001373767853,
+      "max_ms": 4.438200034201145
+    },
+    "n_repeats": 500,
+    "n_warmup": 50
+  },
+  "throughput_baseline": {
+    "duration_s": 10.04811600013636,
+    "n_completed": 110,
+    "n_errors": 0,
+    "throughput_rps": 10.947325846806228,
+    "error_rate_pct": 0.0
+  },
+  "throughput_actual": {
+    "duration_s": 10.00134880002588,
+    "n_completed": 4659,
+    "n_errors": 0,
+    "throughput_rps": 465.8371678815905,
+    "error_rate_pct": 0.0
+  },
+  "pruning": {
+    "baseline_n_est": 200,
+    "baseline_f1": 0.8740912917475679,
+    "baseline_latency_p95": 1.358729985076934,
+    "selected_n_est": 75,
+    "selected_f1": 0.8646215548247252,
+    "selected_latency_p95": 1.2345099705271423,
+    "latency_reduction_pct": 9.142362052365993
+  },
+  "ab_comparison": {
+    "metrics_baseline": {
+      "modelo": "Baseline RF",
+      "F1-Macro": 0.9746679688894672,
+      "Precision (alto)": 0.9359325218527899,
+      "Recall (alto)": 0.9894848210044479
+    },
+    "metrics_actual": {
+      "modelo": "Modelo actual",
+      "F1-Macro": 0.8868449846204527,
+      "Precision (alto)": 0.8617964980298785,
+      "Recall (alto)": 0.8831023016798376
+    },
+    "false_alarms_per_hour_baseline": 290.75461496871867,
+    "false_alarms_per_hour_actual": 607.9246157410984
+  }
+}

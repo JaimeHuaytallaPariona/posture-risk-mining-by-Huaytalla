@@ -1,0 +1,89 @@
+name: Tests
+
+on:
+  push:
+    branches: [main, master, experiments/**]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  smoke-tests:
+    name: Smoke tests (Ubuntu, Python 3.10)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+
+      - name: Instalar dependencias mínimas para smoke tests
+        run: |
+          python -m pip install --upgrade pip
+          pip install \
+            numpy==1.26.4 \
+            pydantic==2.8.2 \
+            python-dotenv==1.0.1 \
+            pytest==8.3.2 \
+            pytest-cov==5.0.0 \
+            loguru==0.7.2 \
+            scikit-learn==1.5.1 \
+            xgboost==2.1.1 \
+            pyyaml==6.0.1
+
+      - name: Verificar estructura del proyecto
+        run: |
+          test -f Makefile && echo "OK: Makefile presente"
+          test -f make.ps1 && echo "OK: make.ps1 presente"
+          test -f .env.example && echo "OK: .env.example presente"
+          test -f configs/environment.yml && echo "OK: environment.yml presente"
+          test -f src/posture_risk/contracts/io_schemas.py && echo "OK: contratos I/O presentes"
+          test -f docs/deployment/plan_de_despliegue.md && echo "OK: plan de despliegue presente"
+
+      - name: Validar YAML del entorno
+        run: |
+          python -c "import yaml; yaml.safe_load(open('configs/environment.yml'))"
+
+      - name: Validar JSON de ejemplos
+        run: |
+          python -c "import json; json.load(open('contracts/examples.json'))"
+
+      - name: Añadir src al PYTHONPATH
+        run: echo "PYTHONPATH=${{ github.workspace }}/src" >> $GITHUB_ENV
+
+      - name: Ejecutar smoke tests
+        run: |
+          python -m pytest tests/test_smoke.py -v --tb=short
+
+  lint-schemas:
+    name: Validar esquemas de contratos I/O
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout código
+        uses: actions/checkout@v4
+
+      - name: Configurar Python 3.10
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Instalar dependencias
+        run: pip install pydantic==2.8.2 pyyaml==6.0.1
+
+      - name: Añadir src al PYTHONPATH
+        run: echo "PYTHONPATH=${{ github.workspace }}/src" >> $GITHUB_ENV
+
+      - name: Validar que los esquemas importan sin errores
+        run: |
+          python -c "from posture_risk.contracts.io_schemas import PredictionInput, PredictionOutput, PredictionError, BatchPredictionInput, BatchPredictionOutput, ErrorCode, RiskLevel; print('Todos los esquemas se importan correctamente')"
+
+      - name: Validar ejemplos JSON contra esquemas
+        run: |
+          python scripts/validate_examples.py contracts/examples.json
